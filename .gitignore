@@ -1,0 +1,42 @@
+# Update .gitignore
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+shopease.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Node.js (if any remaining)
+node_modules/
+package-lock.json
+
+# Misc
+npx
+dir
+shopease.db
+shopease.db
