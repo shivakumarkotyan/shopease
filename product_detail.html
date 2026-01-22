@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - ShopEase{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ product.image_url }}" 
+                 class="img-fluid rounded" 
+                 alt="{{ product.name }}"
+                 onerror="this.src='/static/images/placeholder.jpg'">
+        </div>
+        <div class="col-md-6">
+            <h1>{{ product.name }}</h1>
+            <p class="text-muted">Category: {{ product.category_name }}</p>
+            <h2 class="price">₹{{ "%.2f"|format(product.price) }}</h2>
+            
+            <p class="mt-4">{{ product.description }}</p>
+            
+            <div class="mt-4">
+                <p><strong>Stock:</strong> 
+                    {% if product.stock_quantity > 0 %}
+                        <span class="text-success">{{ product.stock_quantity }} available</span>
+                    {% else %}
+                        <span class="text-danger">Out of Stock</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            {% if current_user and product.stock_quantity > 0 %}
+            <form method="POST" action="{{ url_for('add_to_cart') }}" class="mt-4">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="quantity" class="form-label"><strong>Quantity:</strong></label>
+                    </div>
+                    <div class="col-auto">
+                        <div class="input-group" style="width: 140px;">
+                            <button type="button" class="btn btn-outline-secondary quantity-minus">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" 
+                                   class="form-control text-center quantity-input">
+                            <button type="button" class="btn btn-outline-secondary quantity-plus">+</button>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% elif not current_user %}
+            <div class="mt-4">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login to Purchase</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const minusBtn = document.querySelector('.quantity-minus');
+    const plusBtn = document.querySelector('.quantity-plus');
+    const quantityInput = document.querySelector('.quantity-input');
+    
+    if (minusBtn && plusBtn && quantityInput) {
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+        
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            const max = parseInt(quantityInput.max);
+            if (value < max) {
+                quantityInput.value = value + 1;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

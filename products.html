@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Products</h2>
+    
+    <!-- Show search results info -->
+    {% if search_query %}
+        <p>Search results for: "<strong>{{ search_query }}</strong>"</p>
+    {% endif %}
+    
+    {% if current_category %}
+        <p>Filtered by category: <strong>
+            {% if current_category == 1 %}Electronics
+            {% elif current_category == 2 %}Clothing
+            {% elif current_category == 3 %}Books
+            {% elif current_category == 4 %}Home & Garden
+            {% endif %}
+        </strong></p>
+    {% endif %}
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card product-card">
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}"
+                     onerror="this.src='/static/images/placeholder.jpg'">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text price"><strong>₹{{ "%.2f"|format(product.price) }}</strong></p>
+                    <p class="card-text"><small class="text-muted">Category: {{ product.category_name }}</small></p>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                    
+                    {% if current_user %}
+                    <form method="POST" action="{{ url_for('add_to_cart') }}" class="mt-2">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-success btn-sm w-100">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No products found.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
